@@ -43,6 +43,7 @@ LabDEV/
 - ✅ Compatible con extensiones de Open VSX
 - ✅ Configuración independiente (carpeta `.labdev`)
 - ✅ **Tema personalizado con colores fucsia** 💜
+- ✅ **AI Assistant integrado** 🤖 (modelos gratuitos de HuggingFace)
 - ✅ Totalmente personalizable
 - ✅ Portable - no requiere instalación
 
@@ -64,6 +65,27 @@ El tema se activa automáticamente. Si necesitas cambiarlo manualmente:
 - **Texto**: `#d4d4d4` - Código
 
 Ver documentación completa: [TEMA-LABDEV.md](TEMA-LABDEV.md)
+
+## 🤖 AI Assistant (Opcional)
+
+LabDev incluye una extensión de chat con IA usando modelos **GRATUITOS** de HuggingFace.
+
+### Instalar AI Assistant
+
+```powershell
+cd C:\Users\sylex\LabDEV\LabDEV
+.\instalar-ai-assistant.ps1
+```
+
+### Características
+
+- 💬 Chat con IA integrado
+- 🔍 Explicar código seleccionado
+- 🔧 Corregir errores automáticamente
+- 💡 Responder preguntas de programación
+- 🆓 **100% GRATIS** (con límites razonables)
+
+Ver guía completa: [AI-ASSISTANT-GUIA.md](AI-ASSISTANT-GUIA.md)
 
 ## 🎨 Personalización Adicional
 

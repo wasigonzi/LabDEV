@@ -58,10 +58,20 @@ Tu editor LabDev está listo para usar!
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+🎨 TEMA LABDEV DARK (FUCSIA)
+
+   ✓ Ya está aplicado y configurado como predeterminado
+   ✓ Colores fucsia (#ff00ff) en lugar de violeta
+   ✓ Estilo oscuro inspirado en Kiro
+   
+   Documentación: TEMA-LABDEV.md
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 🎨 PERSONALIZAR
 
    Icono:  LabDev-Editor\resources\app\resources\win32\code.ico
-   Temas:  LabDev-Editor\resources\app\extensions\theme-defaults\
+   Tema:   LabDev-Editor\resources\app\extensions\theme-defaults\themes\labdev-dark-color-theme.json
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 

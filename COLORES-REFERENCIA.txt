@@ -1,0 +1,117 @@
+╔═══════════════════════════════════════════════════════════════╗
+║              PALETA DE COLORES LABDEV DARK                    ║
+╚═══════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+COLOR PRINCIPAL - FUCSIA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Fucsia Principal:     #ff00ff  ████████████████████████████
+Fucsia Hover:         #ff33ff  ████████████████████████████
+Fucsia Transparente:  #ff00ff33 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+
+Uso:
+  • Keywords (const, let, function, class, if, return)
+  • Cursor del editor
+  • Bordes de pestañas activas
+  • Números de línea activos
+  • Botones principales
+  • Badges y notificaciones
+  • Barra de progreso
+  • Iconos activos en barra de actividad
+  • Títulos de secciones
+  • Llaves y paréntesis
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FONDOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Editor Principal:     #1e1e1e  ████████████████████████████
+Barra Lateral:        #1e1e1e  ████████████████████████████
+Barra de Actividad:   #1a1a1a  ████████████████████████████
+Barra de Estado:      #1a1a1a  ████████████████████████████
+Paneles:              #252525  ████████████████████████████
+Pestañas Inactivas:   #252525  ████████████████████████████
+Inputs:               #252525  ████████████████████████████
+Línea Actual:         #2a2a2a  ████████████████████████████
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TEXTO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Texto Principal:      #d4d4d4  ████████████████████████████
+Texto Secundario:     #cccccc  ████████████████████████████
+Texto Inactivo:       #888888  ████████████████████████████
+Números de Línea:     #858585  ████████████████████████████
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BORDES Y SEPARADORES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Bordes:               #2d2d2d  ████████████████████████████
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SINTAXIS DE CÓDIGO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Keywords:             #ff00ff  ████████████████████████████ (FUCSIA)
+Strings:              #ce9178  ████████████████████████████ (Naranja)
+Variables:            #9cdcfe  ████████████████████████████ (Azul claro)
+Funciones:            #dcdcaa  ████████████████████████████ (Amarillo)
+Tipos/Clases:         #4ec9b0  ████████████████████████████ (Verde azulado)
+Números:              #b5cea8  ████████████████████████████ (Verde claro)
+Comentarios:          #6a9955  ████████████████████████████ (Verde)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TERMINAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Negro:                #000000  ████████████████████████████
+Rojo:                 #cd3131  ████████████████████████████
+Verde:                #0dbc79  ████████████████████████████
+Amarillo:             #e5e510  ████████████████████████████
+Azul:                 #2472c8  ████████████████████████████
+Magenta:              #ff00ff  ████████████████████████████ (FUCSIA)
+Cyan:                 #11a8cd  ████████████████████████████
+Blanco:               #e5e5e5  ████████████████████████████
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+COMPARACIÓN CON KIRO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Elemento              Kiro          LabDev
+────────────────────────────────────────────────────────────
+Color Principal       Violeta       FUCSIA (#ff00ff)
+Fondo Editor          Oscuro        Oscuro (#1e1e1e)
+Fondo Barras          Oscuro        Oscuro (#1a1a1a)
+Texto                 Claro         Claro (#d4d4d4)
+Acentos               Violeta       FUCSIA
+Keywords              Violeta       FUCSIA
+Cursores              Violeta       FUCSIA
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EJEMPLO DE CÓDIGO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// Comentario en verde
+const myVariable = "string en naranja";  // const en FUCSIA
+let count = 123;                         // let en FUCSIA, número en verde claro
+
+function myFunction() {                  // function en FUCSIA, nombre en amarillo
+  if (count > 0) {                       // if en FUCSIA
+    return true;                         // return en FUCSIA
+  }
+}
+
+class MyClass {                          // class en FUCSIA, nombre en verde azulado
+  constructor() {                        // constructor en amarillo
+    this.value = myVariable;             // this en FUCSIA
+  }
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Para modificar estos colores, edita:
+LabDev-Editor\resources\app\extensions\theme-defaults\themes\labdev-dark-color-theme.json
+
+Documentación completa: TEMA-LABDEV.md

@@ -103,7 +103,7 @@
     "terminal.ansiRed": "#cd3131",
     "terminal.ansiGreen": "#0dbc79",
     "terminal.ansiYellow": "#e5e510",
-    "terminal.ansiBlue": "#2472c8",
+    "terminal.ansiBlue": "#ff00ff",
     "terminal.ansiMagenta": "#ff00ff",
     "terminal.ansiCyan": "#11a8cd",
     "terminal.ansiWhite": "#e5e5e5",
@@ -111,7 +111,7 @@
     "terminal.ansiBrightRed": "#f14c4c",
     "terminal.ansiBrightGreen": "#23d18b",
     "terminal.ansiBrightYellow": "#f5f543",
-    "terminal.ansiBrightBlue": "#3b8eea",
+    "terminal.ansiBrightBlue": "#ff33ff",
     "terminal.ansiBrightMagenta": "#ff33ff",
     "terminal.ansiBrightCyan": "#29b8db",
     "terminal.ansiBrightWhite": "#e5e5e5"
@@ -146,7 +146,7 @@
     {
       "scope": ["variable", "variable.other"],
       "settings": {
-        "foreground": "#9cdcfe"
+        "foreground": "#ff00ff"
       }
     },
     {
@@ -176,13 +176,13 @@
     {
       "scope": ["entity.name.type", "entity.name.class"],
       "settings": {
-        "foreground": "#4ec9b0"
+        "foreground": "#ff00ff"
       }
     },
     {
       "scope": ["support.type", "support.class"],
       "settings": {
-        "foreground": "#4ec9b0"
+        "foreground": "#ff00ff"
       }
     },
     {

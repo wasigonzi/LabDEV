@@ -1,0 +1,91 @@
+{
+  "name": "labdev-ai-assistant",
+  "displayName": "LabDev AI Assistant",
+  "description": "Chat con IA usando modelos gratuitos de HuggingFace",
+  "version": "1.0.0",
+  "publisher": "labdev",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other",
+    "Machine Learning"
+  ],
+  "activationEvents": [],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "labdev-ai.openChat",
+        "title": "💜 LabDev: Chat con IA",
+        "icon": "$(sparkle)"
+      },
+      {
+        "command": "labdev-ai.askQuestion",
+        "title": "LabDev: Preguntar a la IA"
+      },
+      {
+        "command": "labdev-ai.explainCode",
+        "title": "LabDev: Explicar código seleccionado"
+      },
+      {
+        "command": "labdev-ai.fixCode",
+        "title": "LabDev: Corregir código"
+      }
+    ],
+
+    "menus": {
+      "editor/title": [
+        {
+          "command": "labdev-ai.openChat",
+          "group": "navigation",
+          "when": "editorTextFocus"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "labdev-ai.explainCode",
+          "when": "editorHasSelection",
+          "group": "labdev-ai"
+        },
+        {
+          "command": "labdev-ai.fixCode",
+          "when": "editorHasSelection",
+          "group": "labdev-ai"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "labdev-ai.openChat",
+        "key": "ctrl+shift+l",
+        "mac": "cmd+shift+l"
+      }
+    ],
+    "configuration": {
+      "title": "LabDev AI Assistant",
+      "properties": {
+        "labdev-ai.model": {
+          "type": "string",
+          "default": "mistralai/Mistral-7B-Instruct-v0.2",
+          "description": "Modelo de HuggingFace a usar"
+        },
+        "labdev-ai.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API Key de HuggingFace (gratis en huggingface.co)"
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "@huggingface/inference": "^2.8.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
