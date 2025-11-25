@@ -14,11 +14,32 @@
   "activationEvents": [],
   "main": "./extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "labdev-ai-container",
+          "title": "LabDev AI Assistant",
+          "icon": "icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "labdev-ai-container": [
+        {
+          "id": "labdev-ai-chat",
+          "name": "Chat con IA",
+          "type": "webview"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "labdev-ai.openChat",
-        "title": "💜 LabDev: Chat con IA",
-        "icon": "$(sparkle)"
+        "title": "💜 LabDev AI",
+        "icon": {
+          "light": "icon-light.svg",
+          "dark": "icon-dark.svg"
+        }
       },
       {
         "command": "labdev-ai.askQuestion",
@@ -35,11 +56,30 @@
     ],
 
     "menus": {
+      "commandPalette": [
+        {
+          "command": "labdev-ai.openChat"
+        }
+      ],
       "editor/title": [
         {
           "command": "labdev-ai.openChat",
+          "group": "navigation@1",
+          "when": "true"
+        }
+      ],
+      "editor/title/run": [
+        {
+          "command": "labdev-ai.openChat",
+          "group": "navigation@1",
+          "when": "true"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "labdev-ai.openChat",
           "group": "navigation",
-          "when": "editorTextFocus"
+          "when": "true"
         }
       ],
       "editor/context": [

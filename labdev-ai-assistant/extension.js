@@ -16,17 +16,13 @@ class ChatViewProvider {
             localResourceRoots: [this._extensionUri]
         };
 
-        webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+        webviewView.webview.html = getChatHtml();
 
         webviewView.webview.onDidReceiveMessage(async data => {
             if (data.type === 'sendMessage') {
-                await this._handleMessage(data.message);
+                await handleChatMessage(data.message, webviewView.webview);
             }
         });
-    }
-
-    async _handleMessage(message) {
-        // Esta función ya no se usa
     }
 }
 
@@ -82,13 +78,8 @@ async function handleChatMessage(message, webview) {
     }
 }
 
-    _getHtmlForWebview(webview) {
-        return getChatHtml();
-    }
-}
-
 function getChatHtml() {
-        return `<!DOCTYPE html>
+    return `<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -248,6 +239,24 @@ function getChatHtml() {
 }
 
 function activate(context) {
+    console.log('LabDev AI Assistant activating...');
+    
+    // Registrar el webview provider para la vista en la barra lateral
+    const provider = new ChatViewProvider(context.extensionUri);
+    context.subscriptions.push(
+        vscode.window.registerWebviewViewProvider('labdev-ai-chat', provider)
+    );
+
+    // Crear botón en barra de estado
+    statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+    statusBarItem.text = "$(sparkle) LabDev AI";
+    statusBarItem.tooltip = "Abrir Chat con IA (Ctrl+Shift+L)";
+    statusBarItem.command = 'labdev-ai.openChat';
+    statusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.prominentBackground');
+    statusBarItem.show();
+    context.subscriptions.push(statusBarItem);
+
+    // Comando para abrir chat en panel
     context.subscriptions.push(
         vscode.commands.registerCommand('labdev-ai.openChat', () => {
             if (chatPanel) {
@@ -268,7 +277,7 @@ function activate(context) {
                 chatPanel.webview.onDidReceiveMessage(
                     async message => {
                         if (message.type === 'sendMessage') {
-                            await handleChatMessage(message.text, chatPanel.webview);
+                            await handleChatMessage(message.message, chatPanel.webview);
                         }
                     }
                 );
@@ -280,6 +289,7 @@ function activate(context) {
         })
     );
 
+    // Comando para explicar código
     context.subscriptions.push(
         vscode.commands.registerCommand('labdev-ai.explainCode', async () => {
             const editor = vscode.window.activeTextEditor;
