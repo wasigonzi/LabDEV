@@ -4,10 +4,14 @@ function getHtml() {
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#1a1a1a;color:#fff;height:100vh;display:flex;flex-direction:column;overflow:hidden}
 #header{padding:16px 20px;background:#1a1a1a;border-bottom:1px solid #2d2d2d;flex-shrink:0}
-#title-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+#title-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 #title-area{display:flex;align-items:center;gap:10px}
 #title{color:#ff00ff;font-weight:600;font-size:18px}
 #subtitle{color:#888;font-size:13px}
+#mode-selector{display:flex;gap:8px;margin-top:8px;padding:8px;background:#252525;border-radius:6px}
+.mode-btn{background:#1e1e1e;border:1px solid #3d3d3d;color:#aaa;font-size:12px;cursor:pointer;padding:6px 12px;border-radius:4px;transition:all 0.2s}
+.mode-btn:hover{background:#2d2d2d;color:#fff}
+.mode-btn.active{background:#ff00ff;border-color:#ff00ff;color:#fff;font-weight:600}
 .btn{background:transparent;border:none;color:#fff;font-size:16px;cursor:pointer;padding:4px 8px;border-radius:4px}
 .btn:hover{background:rgba(255,255,255,0.1)}
 #messages{flex:1;overflow-y:auto;padding:20px}
@@ -20,6 +24,15 @@ ul{color:#aaa;font-size:12px;line-height:1.8;padding-left:20px}
 .message.user{background:#252525}
 .message.ai{background:#1e1e1e}
 .message-content{color:#fff;font-size:14px;line-height:1.6;white-space:pre-wrap}
+.edit-preview{background:#252525;border:1px solid #3d3d3d;border-radius:8px;padding:12px;margin-top:12px}
+.edit-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.edit-file{color:#ff00ff;font-size:13px;font-weight:600}
+.edit-actions{display:flex;gap:8px}
+.edit-btn{background:#ff00ff;color:#fff;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:600}
+.edit-btn:hover{background:#ff33ff}
+.edit-btn.reject{background:#3d3d3d;color:#aaa}
+.edit-btn.reject:hover{background:#4d4d4d;color:#fff}
+.edit-code{background:#1e1e1e;border:1px solid #2d2d2d;border-radius:4px;padding:10px;font-family:monospace;font-size:12px;color:#ddd;overflow-x:auto;max-height:300px;overflow-y:auto}
 #input-area{padding:16px 20px;background:#1a1a1a;border-top:1px solid #2d2d2d;flex-shrink:0}
 #input-wrapper{display:flex;align-items:center;background:#252525;border:1px solid #3d3d3d;border-radius:8px;padding:12px}
 #input{flex:1;background:transparent;color:#fff;border:none;outline:none;font-size:14px;resize:none;font-family:inherit;line-height:1.5;max-height:120px}
@@ -35,13 +48,20 @@ ul{color:#aaa;font-size:12px;line-height:1.8;padding-left:20px}
 <button class="btn" onclick="openConfig()">⚙️</button>
 </div>
 <div id="subtitle">Plan, search, or build anything</div>
+<div id="mode-selector">
+<button class="mode-btn" data-mode="chat" onclick="setMode('chat')">💬 Chat</button>
+<button class="mode-btn active" data-mode="agent" onclick="setMode('agent')">🤖 Agent</button>
+<button class="mode-btn" data-mode="agent-full" onclick="setMode('agent-full')">⚡ Full Access</button>
+</div>
 </div>
 <div id="messages">
 <div id="welcome-card">
-<div id="welcome-title">💜 Vibe</div>
-<div id="welcome-desc">Chat first, then build. Explore ideas and iterate as you discover needs.</div>
-<div class="great-for">Great for:</div>
-<ul><li>Rapid exploration and testing</li><li>Building when requirements are unclear</li><li>Implementing a task</li></ul>
+<div id="welcome-title">💜 LabDev AI Agent</div>
+<div id="welcome-desc">Chat, code, and build with AI. Reference files with @filename and get code edits with preview.</div>
+<div class="great-for">Modos disponibles:</div>
+<ul><li><strong>💬 Chat</strong> - Solo conversación, sin acciones</li><li><strong>🤖 Agent</strong> - Lee/edita archivos con aprobación</li><li><strong>⚡ Full Access</strong> - Acceso completo automático</li></ul>
+<div class="great-for" style="margin-top:12px">Características:</div>
+<ul><li>Usa <strong>@archivo.js</strong> para referenciar archivos</li><li>Preview de cambios antes de aplicar</li><li>Edición de código con un clic</li></ul>
 </div>
 </div>
 <div id="input-area">
@@ -56,15 +76,188 @@ ul{color:#aaa;font-size:12px;line-height:1.8;padding-left:20px}
 const vscode=acquireVsCodeApi();
 const messages=document.getElementById('messages');
 const input=document.getElementById('input');
+let currentMode='agent';
+
 input.oninput=()=>{input.style.height='auto';input.style.height=input.scrollHeight+'px'};
 input.onkeydown=(e)=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}};
-function sendMessage(){const text=input.value.trim();if(!text)return;vscode.postMessage({type:'sendMessage',text:text});input.value='';input.style.height='auto'}
-function addMessage(role,content){const msg=document.createElement('div');msg.className='message '+role;const msgContent=document.createElement('div');msgContent.className='message-content';msgContent.textContent=content;msg.appendChild(msgContent);messages.appendChild(msg);messages.scrollTop=messages.scrollHeight;return msg}
-function openConfig(){vscode.postMessage({type:'getConfig'})}
-window.addEventListener('message',event=>{const msg=event.data;switch(msg.type){case 'userMessage':addMessage('user',msg.content);break;case 'thinking':addMessage('ai','💜 Pensando...');break;case 'aiMessage':const lastMsg=messages.lastElementChild;if(lastMsg&&lastMsg.textContent.includes('Pensando')){lastMsg.querySelector('.message-content').textContent=msg.content}else{addMessage('ai',msg.content)}break;case 'config':showConfigModal(msg.apiKey);break;case 'configSaved':const modal=document.querySelector('.modal');if(modal)modal.remove();addMessage('ai','✓ Configuración guardada');break}});
-function showConfigModal(apiKey){const modal=document.createElement('div');modal.className='modal';modal.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:9999';modal.innerHTML=\`<div style="background:#2d2d2d;padding:24px;border-radius:12px;width:90%;max-width:400px;border:1px solid #3d3d3d"><div style="color:#ff00ff;font-size:18px;font-weight:600;margin-bottom:16px">⚙️ Configuración</div><div style="color:#ccc;font-size:13px;margin-bottom:8px">API Key de HuggingFace:</div><input type="password" id="api-key" value="\${apiKey}" placeholder="hf_..." style="width:100%;background:#1e1e1e;color:#fff;border:1px solid #3d3d3d;padding:10px;border-radius:6px;font-size:13px;margin-bottom:12px"><div style="color:#888;font-size:12px;margin-bottom:16px;line-height:1.5">Obtén tu API Key gratis en: <a href="https://huggingface.co/settings/tokens" target="_blank" style="color:#ff00ff">huggingface.co/settings/tokens</a></div><div style="display:flex;gap:8px;justify-content:flex-end"><button onclick="closeModal()" style="background:transparent;color:#ccc;border:1px solid #3d3d3d;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px">Cancelar</button><button onclick="saveConfig()" style="background:#ff00ff;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600">Guardar</button></div></div>\`;document.body.appendChild(modal);document.getElementById('api-key').focus()}
-function closeModal(){const modal=document.querySelector('.modal');if(modal)modal.remove()}
-function saveConfig(){const apiKey=document.getElementById('api-key').value.trim();vscode.postMessage({type:'saveConfig',apiKey:apiKey})}
+
+function sendMessage(){
+    const text=input.value.trim();
+    if(!text)return;
+    vscode.postMessage({type:'sendMessage',text:text});
+    input.value='';
+    input.style.height='auto';
+}
+
+function addMessage(role,content,edits){
+    const msg=document.createElement('div');
+    msg.className='message '+role;
+    const msgContent=document.createElement('div');
+    msgContent.className='message-content';
+    msgContent.textContent=content;
+    msg.appendChild(msgContent);
+    if(edits&&edits.length>0){
+        edits.forEach(edit=>{
+            const preview=createEditPreview(edit);
+            msg.appendChild(preview);
+        });
+    }
+    messages.appendChild(msg);
+    messages.scrollTop=messages.scrollHeight;
+    return msg;
+}
+
+function createEditPreview(edit){
+    const preview=document.createElement('div');
+    preview.className='edit-preview';
+    preview.dataset.editId=edit.id;
+    
+    const header=document.createElement('div');
+    header.className='edit-header';
+    
+    const fileDiv=document.createElement('div');
+    fileDiv.className='edit-file';
+    fileDiv.textContent='📝 '+edit.filePath;
+    
+    const actionsDiv=document.createElement('div');
+    actionsDiv.className='edit-actions';
+    
+    const rejectBtn=document.createElement('button');
+    rejectBtn.className='edit-btn reject';
+    rejectBtn.textContent='Rechazar';
+    rejectBtn.onclick=()=>rejectEdit(edit.id);
+    
+    const applyBtn=document.createElement('button');
+    applyBtn.className='edit-btn';
+    applyBtn.textContent='Aplicar';
+    applyBtn.onclick=()=>applyEdit(edit);
+    
+    actionsDiv.appendChild(rejectBtn);
+    actionsDiv.appendChild(applyBtn);
+    header.appendChild(fileDiv);
+    header.appendChild(actionsDiv);
+    
+    const codeDiv=document.createElement('div');
+    codeDiv.className='edit-code';
+    codeDiv.textContent=edit.code;
+    
+    preview.appendChild(header);
+    preview.appendChild(codeDiv);
+    
+    return preview;
+}
+
+function applyEdit(edit){
+    vscode.postMessage({type:'applyEdit',edit:edit});
+    const preview=document.querySelector('[data-edit-id="'+edit.id+'"]');
+    if(preview){
+        preview.style.opacity='0.5';
+        const actions=preview.querySelector('.edit-actions');
+        actions.innerHTML='<span style="color:#0f0">✓ Aplicando...</span>';
+    }
+}
+
+function rejectEdit(id){
+    vscode.postMessage({type:'rejectEdit',editId:id});
+    const preview=document.querySelector('[data-edit-id="'+id+'"]');
+    if(preview){
+        preview.remove();
+    }
+}
+
+function setMode(mode){
+    currentMode=mode;
+    document.querySelectorAll('.mode-btn').forEach(btn=>{
+        btn.classList.remove('active');
+        if(btn.dataset.mode===mode){
+            btn.classList.add('active');
+        }
+    });
+    vscode.postMessage({type:'setMode',mode:mode});
+}
+
+function openConfig(){
+    vscode.postMessage({type:'getConfig'});
+}
+
+window.addEventListener('message',event=>{
+    const msg=event.data;
+    switch(msg.type){
+        case 'userMessage':
+            addMessage('user',msg.content);
+            break;
+        case 'thinking':
+            addMessage('ai','💜 Pensando...');
+            break;
+        case 'aiMessage':
+            const lastMsg=messages.lastElementChild;
+            if(lastMsg&&lastMsg.textContent.includes('Pensando')){
+                lastMsg.querySelector('.message-content').textContent=msg.content;
+            }else{
+                addMessage('ai',msg.content);
+            }
+            break;
+        case 'aiMessageWithEdits':
+            const lastMsg2=messages.lastElementChild;
+            if(lastMsg2&&lastMsg2.textContent.includes('Pensando')){
+                lastMsg2.remove();
+            }
+            addMessage('ai',msg.content,msg.edits);
+            break;
+        case 'modeChanged':
+            currentMode=msg.mode;
+            break;
+        case 'editApplied':
+            addMessage('ai','✓ Archivo actualizado: '+msg.filePath);
+            break;
+        case 'editRejected':
+            addMessage('ai','Edición rechazada');
+            break;
+        case 'editError':
+            addMessage('ai','Error al aplicar edición: '+msg.error);
+            break;
+        case 'config':
+            showConfigModal(msg.apiKey);
+            break;
+        case 'configSaved':
+            const modal=document.querySelector('.modal');
+            if(modal)modal.remove();
+            addMessage('ai','✓ Configuración guardada');
+            break;
+    }
+});
+
+function showConfigModal(apiKey){
+    const modal=document.createElement('div');
+    modal.className='modal';
+    modal.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:9999';
+    
+    const content=document.createElement('div');
+    content.style.cssText='background:#2d2d2d;padding:24px;border-radius:12px;width:90%;max-width:400px;border:1px solid #3d3d3d';
+    
+    content.innerHTML='<div style="color:#ff00ff;font-size:18px;font-weight:600;margin-bottom:16px">⚙️ Configuración</div>'+
+        '<div style="color:#ccc;font-size:13px;margin-bottom:8px">API Key de HuggingFace:</div>'+
+        '<input type="password" id="api-key" value="'+apiKey+'" placeholder="hf_..." style="width:100%;background:#1e1e1e;color:#fff;border:1px solid #3d3d3d;padding:10px;border-radius:6px;font-size:13px;margin-bottom:12px">'+
+        '<div style="color:#888;font-size:12px;margin-bottom:16px;line-height:1.5">Obtén tu API Key gratis en: <a href="https://huggingface.co/settings/tokens" target="_blank" style="color:#ff00ff">huggingface.co/settings/tokens</a></div>'+
+        '<div style="display:flex;gap:8px;justify-content:flex-end">'+
+        '<button onclick="closeModal()" style="background:transparent;color:#ccc;border:1px solid #3d3d3d;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px">Cancelar</button>'+
+        '<button onclick="saveConfig()" style="background:#ff00ff;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600">Guardar</button>'+
+        '</div>';
+    
+    modal.appendChild(content);
+    document.body.appendChild(modal);
+    document.getElementById('api-key').focus();
+}
+
+function closeModal(){
+    const modal=document.querySelector('.modal');
+    if(modal)modal.remove();
+}
+
+function saveConfig(){
+    const apiKey=document.getElementById('api-key').value.trim();
+    vscode.postMessage({type:'saveConfig',apiKey:apiKey});
+}
 </script>
 </body></html>`;
 }

@@ -1,8 +1,8 @@
 {
   "name": "labdev-ai-complete",
   "displayName": "LabDev AI Complete",
-  "description": "Asistente AI completo estilo Kiro con todas las funcionalidades",
-  "version": "1.0.0",
+  "description": "Asistente AI estilo Codex con modos Agent, referencias @archivo y preview de ediciones",
+  "version": "2.0.0",
   "publisher": "labdev",
   "engines": {
     "vscode": "^1.80.0"

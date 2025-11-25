@@ -8,6 +8,8 @@ class LabDevAIProvider {
         this._context = context;
         this._view = null;
         this._conversationHistory = [];
+        this._approvalMode = 'agent'; // 'chat', 'agent', 'agent-full'
+        this._pendingEdits = [];
     }
 
     resolveWebviewView(webviewView) {
@@ -36,6 +38,16 @@ class LabDevAIProvider {
             case 'saveConfig':
                 await this._saveConfig(message.apiKey);
                 break;
+            case 'setMode':
+                this._approvalMode = message.mode;
+                this._postMessage({ type: 'modeChanged', mode: message.mode });
+                break;
+            case 'applyEdit':
+                await this._applyEdit(message.edit);
+                break;
+            case 'rejectEdit':
+                this._postMessage({ type: 'editRejected', editId: message.editId });
+                break;
         }
     }
 
@@ -56,17 +68,50 @@ class LabDevAIProvider {
                 return;
             }
 
-            const actions = await this._detectActions(userMessage);
-            let contextInfo = '';
-            if (actions.length > 0) {
-                contextInfo = await this._executeActions(actions);
+            // Procesar referencias @archivo
+            const { processedMessage, referencedFiles } = await this._processFileReferences(userMessage);
+            
+            // Detectar acciones según el modo
+            const actions = await this._detectActions(processedMessage);
+            let contextInfo = referencedFiles;
+            
+            // En modo Chat, solo responder sin ejecutar acciones
+            if (this._approvalMode === 'chat') {
+                const fullPrompt = this._buildPrompt(processedMessage, contextInfo);
+                const response = await this._callAI(fullPrompt, apiKey);
+                this._conversationHistory.push({ role: 'assistant', content: response });
+                this._postMessage({ type: 'aiMessage', content: response });
+                return;
             }
 
-            const fullPrompt = this._buildPrompt(userMessage, contextInfo);
+            // En modo Agent, ejecutar acciones con aprobación
+            if (actions.length > 0) {
+                const actionResults = await this._executeActions(actions);
+                contextInfo += '\n\n' + actionResults;
+            }
+
+            const fullPrompt = this._buildPrompt(processedMessage, contextInfo);
             const response = await this._callAI(fullPrompt, apiKey);
 
+            // Detectar si la respuesta incluye ediciones de código
+            const edits = this._detectCodeEdits(response);
+            if (edits.length > 0 && this._approvalMode !== 'agent-full') {
+                this._postMessage({ 
+                    type: 'aiMessageWithEdits', 
+                    content: response,
+                    edits: edits 
+                });
+            } else if (edits.length > 0 && this._approvalMode === 'agent-full') {
+                // Aplicar automáticamente en modo Full Access
+                for (const edit of edits) {
+                    await this._applyEdit(edit);
+                }
+                this._postMessage({ type: 'aiMessage', content: response });
+            } else {
+                this._postMessage({ type: 'aiMessage', content: response });
+            }
+
             this._conversationHistory.push({ role: 'assistant', content: response });
-            this._postMessage({ type: 'aiMessage', content: response });
 
         } catch (error) {
             this._postMessage({ type: 'aiMessage', content: `Error: ${error.message}` });
@@ -117,6 +162,86 @@ class LabDevAIProvider {
     async _listFiles() {
         const files = await vscode.workspace.findFiles('**/*', '**/node_modules/**', 50);
         return files.map(f => vscode.workspace.asRelativePath(f));
+    }
+
+    async _processFileReferences(message) {
+        const filePattern = /@([\w\-\.\/]+\.\w+)/g;
+        const matches = [...message.matchAll(filePattern)];
+        let referencedFiles = '';
+        let processedMessage = message;
+
+        for (const match of matches) {
+            const filePath = match[1];
+            try {
+                const content = await this._readFile(filePath);
+                referencedFiles += `\n\n--- Archivo: ${filePath} ---\n${content}\n`;
+                processedMessage = processedMessage.replace(match[0], `el archivo ${filePath}`);
+            } catch (error) {
+                referencedFiles += `\n\n--- Error al leer ${filePath}: ${error.message} ---\n`;
+            }
+        }
+
+        return { processedMessage, referencedFiles };
+    }
+
+    _detectCodeEdits(response) {
+        const edits = [];
+        const codeBlockPattern = /```(\w+)?\n([\s\S]+?)```/g;
+        const filePathPattern = /(?:archivo|file|path):\s*([\w\-\.\/]+\.\w+)/i;
+        
+        let match;
+        while ((match = codeBlockPattern.exec(response)) !== null) {
+            const language = match[1] || 'text';
+            const code = match[2];
+            
+            // Buscar nombre de archivo en el contexto cercano
+            const contextBefore = response.substring(Math.max(0, match.index - 200), match.index);
+            const fileMatch = contextBefore.match(filePathPattern);
+            
+            if (fileMatch) {
+                edits.push({
+                    id: Date.now() + Math.random(),
+                    filePath: fileMatch[1],
+                    language: language,
+                    code: code,
+                    action: 'replace'
+                });
+            }
+        }
+
+        return edits;
+    }
+
+    async _applyEdit(edit) {
+        try {
+            const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+            if (!workspaceFolder) throw new Error('No hay workspace abierto');
+            
+            const filePath = path.join(workspaceFolder.uri.fsPath, edit.filePath);
+            const fileUri = vscode.Uri.file(filePath);
+            
+            // Crear o sobrescribir archivo
+            await vscode.workspace.fs.writeFile(fileUri, Buffer.from(edit.code, 'utf8'));
+            
+            // Abrir el archivo editado
+            const document = await vscode.workspace.openTextDocument(fileUri);
+            await vscode.window.showTextDocument(document);
+            
+            this._postMessage({ 
+                type: 'editApplied', 
+                editId: edit.id,
+                filePath: edit.filePath 
+            });
+            
+            vscode.window.showInformationMessage(`✓ Archivo actualizado: ${edit.filePath}`);
+        } catch (error) {
+            this._postMessage({ 
+                type: 'editError', 
+                editId: edit.id,
+                error: error.message 
+            });
+            vscode.window.showErrorMessage(`Error al aplicar edición: ${error.message}`);
+        }
     }
 
     _buildPrompt(userMessage, contextInfo) {
