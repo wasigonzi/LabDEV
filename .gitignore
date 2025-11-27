@@ -2,6 +2,11 @@
 vscode/
 VSCodium-Original/
 *.zip
+*.vsix
+
+# Carpetas antiguas (migradas a extension/)
+labdev-ai-complete/
+labdev-ai-assistant/
 
 # Archivos de sistema
 .DS_Store
@@ -14,3 +19,6 @@ npm-debug.log*
 
 # Dependencias
 node_modules/
+
+# Distribución
+dist/

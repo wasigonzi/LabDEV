@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-  <!-- Icono optimizado para barra de título - tema claro -->
-  <path d="M8 2 L9 6 L13 7 L9 8 L8 12 L7 8 L3 7 L7 6 Z" fill="#ff00ff" stroke="#ff00ff" stroke-width="0.5"/>
-  <circle cx="4" cy="4" r="0.8" fill="#ff00ff"/>
-  <circle cx="12" cy="4" r="0.8" fill="#ff00ff"/>
-  <circle cx="4" cy="12" r="0.8" fill="#ff00ff"/>
-  <circle cx="12" cy="12" r="0.8" fill="#ff00ff"/>
-</svg>
